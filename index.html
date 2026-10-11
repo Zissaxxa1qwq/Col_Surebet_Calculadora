@@ -42,22 +42,35 @@
       padding:28px 16px;
       color:var(--ink);
       font:15px Arial,sans-serif;
-      background:
-        radial-gradient(circle at 50% 20%,#29465b 0%,transparent 42%),
-        linear-gradient(145deg,#1d3445,#0e1822 80%);
+      background:var(--bg);
     }
 
     body::before{
       content:"";
       position:fixed;
       inset:0;
-      z-index:0;
+      z-index:1;
       pointer-events:none;
-      opacity:.2;
-      background-image:
-        linear-gradient(125deg,transparent 48%,#9ab2c322 49%,transparent 50%),
-        linear-gradient(35deg,transparent 48%,#9ab2c322 49%,transparent 50%);
-      background-size:120px 120px;
+      background:
+        radial-gradient(ellipse at center,
+          transparent 20%,
+          rgba(3,7,12,.16) 60%,
+          rgba(3,7,12,.82) 100%);
+    }
+
+    .terrain{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      width:100vw;
+      height:100svh;
+      pointer-events:none;
+    }
+
+    .facet{
+      stroke:rgba(183,211,232,.28);
+      stroke-width:1;
+      vector-effect:non-scaling-stroke;
     }
 
     main{
@@ -250,14 +263,16 @@
 
     .house-grid > .field,
     .capital-grid > .field,
-    .odds-grid > .field{
+    .odds-grid > .field,
+    .house-picker,
+    .house-trigger,
+    .house-name{
       min-width:0;
     }
 
     .house-picker{
       position:relative;
       z-index:2;
-      min-width:0;
     }
 
     .house-picker.open{
@@ -267,7 +282,6 @@
     .house-trigger{
       width:100%;
       height:46px;
-      min-width:0;
       display:flex;
       align-items:center;
       gap:9px;
@@ -302,7 +316,6 @@
 
     .house-name{
       flex:1;
-      min-width:0;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
@@ -649,6 +662,12 @@
       font-size:1.75rem;
     }
 
+    .profit em{
+      color:var(--gold2);
+      font-style:normal;
+      font-size:.77rem;
+    }
+
     @media(max-width:600px){
       body{
         align-items:flex-start;
@@ -709,10 +728,35 @@
         padding:18px;
       }
     }
+
+    @media(prefers-reduced-motion:reduce){
+      .facet{
+        transition:none;
+      }
+    }
   </style>
 </head>
 
 <body>
+
+  <svg
+    class="terrain"
+    viewBox="0 0 1600 1000"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <defs>
+      <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#263b4b"/>
+        <stop offset=".5" stop-color="#172734"/>
+        <stop offset="1" stop-color="#0e1822"/>
+      </linearGradient>
+    </defs>
+
+    <rect width="100%" height="100%" fill="url(#base)"></rect>
+    <g id="mesh"></g>
+  </svg>
+
   <main>
     <header>
       <div class="brand">COL SUREBET</div>
@@ -737,12 +781,7 @@
 
         <div class="money-wrap">
           <span class="currency">COP</span>
-          <input
-            id="capital"
-            inputmode="numeric"
-            autocomplete="off"
-            placeholder="Ej: 500.000"
-          >
+          <input id="capital" inputmode="numeric" autocomplete="off" placeholder="Ej: 500.000">
         </div>
       </div>
 
@@ -767,17 +806,9 @@
               </button>
 
               <div class="house-menu">
-                <input
-                  class="house-search"
-                  placeholder="Buscar casa..."
-                  autocomplete="off"
-                >
-
+                <input class="house-search" placeholder="Buscar casa..." autocomplete="off">
                 <div class="house-options"></div>
-
-                <div class="no-results">
-                  No se encontró esa casa
-                </div>
+                <div class="no-results">No se encontró esa casa</div>
               </div>
             </div>
           </div>
@@ -793,17 +824,9 @@
               </button>
 
               <div class="house-menu">
-                <input
-                  class="house-search"
-                  placeholder="Buscar casa..."
-                  autocomplete="off"
-                >
-
+                <input class="house-search" placeholder="Buscar casa..." autocomplete="off">
                 <div class="house-options"></div>
-
-                <div class="no-results">
-                  No se encontró esa casa
-                </div>
+                <div class="no-results">No se encontró esa casa</div>
               </div>
             </div>
           </div>
@@ -829,13 +852,7 @@
 
             <div class="money-wrap">
               <span class="currency">COP</span>
-              <input
-                class="capital-input"
-                id="stake1"
-                inputmode="numeric"
-                autocomplete="off"
-                placeholder="50.000"
-              >
+              <input class="capital-input" id="stake1" inputmode="numeric" autocomplete="off" placeholder="50.000">
             </div>
           </div>
 
@@ -844,13 +861,7 @@
 
             <div class="money-wrap">
               <span class="currency">COP</span>
-              <input
-                class="capital-input"
-                id="stake2"
-                inputmode="numeric"
-                autocomplete="off"
-                placeholder="50.000"
-              >
+              <input class="capital-input" id="stake2" inputmode="numeric" autocomplete="off" placeholder="50.000">
             </div>
           </div>
         </div>
@@ -870,13 +881,7 @@
             <label for="odd1">Cuota casa 1</label>
 
             <div class="odd-wrap">
-              <input
-                id="odd1"
-                type="number"
-                min="1.01"
-                step=".01"
-                placeholder="2.10"
-              >
+              <input id="odd1" type="number" min="1.01" step=".01" placeholder="2.10">
               <span class="odd-suffix">X</span>
             </div>
           </div>
@@ -885,13 +890,7 @@
             <label for="odd2">Cuota casa 2</label>
 
             <div class="odd-wrap">
-              <input
-                id="odd2"
-                type="number"
-                min="1.01"
-                step=".01"
-                placeholder="2.20"
-              >
+              <input id="odd2" type="number" min="1.01" step=".01" placeholder="2.20">
               <span class="odd-suffix">X</span>
             </div>
           </div>
@@ -1015,10 +1014,7 @@
 
       picker.querySelectorAll(".house-option").forEach(option => {
         const name = option.dataset.name;
-
-        const show =
-          name !== blocked &&
-          name.toLowerCase().includes(search);
+        const show = name !== blocked && name.toLowerCase().includes(search);
 
         option.style.display = show ? "flex" : "none";
 
@@ -1041,16 +1037,8 @@
       }
     }
 
-    function closeAllPickers() {
-      document
-        .querySelectorAll(".house-picker.open")
-        .forEach(closePicker);
-    }
-
     function syncPickers() {
-      document
-        .querySelectorAll(".house-picker")
-        .forEach(filterHouses);
+      document.querySelectorAll(".house-picker").forEach(filterHouses);
     }
 
     document.querySelectorAll(".house-picker").forEach(picker => {
@@ -1066,13 +1054,11 @@
       trigger.addEventListener("click", event => {
         event.stopPropagation();
 
-        document
-          .querySelectorAll(".house-picker.open")
-          .forEach(openPicker => {
-            if (openPicker !== picker) {
-              closePicker(openPicker);
-            }
-          });
+        document.querySelectorAll(".house-picker.open").forEach(openPicker => {
+          if (openPicker !== picker) {
+            closePicker(openPicker);
+          }
+        });
 
         const isOpen = !picker.classList.contains("open");
 
@@ -1115,9 +1101,9 @@
         trigger.querySelector(".house-name").textContent = name;
         picker.dataset.value = name;
 
-        options
-          .querySelectorAll(".house-option")
-          .forEach(item => item.classList.remove("selected"));
+        options.querySelectorAll(".house-option").forEach(item => {
+          item.classList.remove("selected");
+        });
 
         option.classList.add("selected");
         search.value = "";
@@ -1127,7 +1113,9 @@
       });
     });
 
-    document.addEventListener("click", closeAllPickers);
+    document.addEventListener("click", () => {
+      document.querySelectorAll(".house-picker.open").forEach(closePicker);
+    });
 
     function formatIntegerInput(input) {
       input.addEventListener("input", () => {
@@ -1143,11 +1131,7 @@
     const stake1Input = document.getElementById("stake1");
     const stake2Input = document.getElementById("stake2");
 
-    [
-      capital,
-      stake1Input,
-      stake2Input
-    ].forEach(formatIntegerInput);
+    [capital, stake1Input, stake2Input].forEach(formatIntegerInput);
 
     function parseMoney(input) {
       return Number(input.value.replace(/[^0-9]/g, "")) || 0;
@@ -1158,13 +1142,7 @@
     }
 
     function money(value) {
-      const rounded = round100(value);
-
-      return (
-        "$" +
-        Math.abs(rounded).toLocaleString("es-CO") +
-        " COP"
-      );
+      return "$" + Math.abs(round100(value)).toLocaleString("es-CO") + " COP";
     }
 
     function showNotice(message) {
@@ -1187,13 +1165,13 @@
     }
 
     const modal = document.getElementById("resultModal");
-    const closeModalButton = document.getElementById("closeModal");
 
     function closeModal() {
       modal.classList.remove("open");
     }
 
-    closeModalButton.addEventListener("click", closeModal);
+    document.getElementById("closeModal")
+      .addEventListener("click", closeModal);
 
     modal.addEventListener("click", event => {
       if (event.target === modal) {
@@ -1279,7 +1257,7 @@
       const return2 = stake2 * odd2;
       const guaranteed = Math.min(return1, return2);
       const profit = guaranteed - total;
-      const roi = total ? (profit / total) * 100 : 0;
+      const roi = total ? profit / total * 100 : 0;
 
       document.getElementById("rows").innerHTML =
         resultRow(
@@ -1322,6 +1300,147 @@
 
       modal.classList.add("open");
     });
+
+    /*
+      Fondo animado optimizado:
+      - Menos triángulos.
+      - Máximo 30 cuadros por segundo.
+      - Sigue funcionando dentro de Telegram.
+    */
+
+    const svgNS = "http://www.w3.org/2000/svg";
+    const mesh = document.getElementById("mesh");
+
+    const W = 1600;
+    const H = 1000;
+    const C = 10;
+    const R = 7;
+    const colors = [
+      "#2b4354",
+      "#2f4b5d",
+      "#263d4c",
+      "#37546a",
+      "#223746",
+      "#3e5c70",
+      "#294354",
+      "#1d3241"
+    ];
+
+    const points = [];
+    const allPoints = [];
+    const polygons = [];
+
+    function randomValue(seed) {
+      const value = Math.sin(seed * 12.9898 + 37) * 43758.5453;
+      return value - Math.floor(value);
+    }
+
+    for (let row = 0; row <= R; row++) {
+      points[row] = [];
+
+      for (let col = 0; col <= C; col++) {
+        const edge =
+          row === 0 ||
+          row === R ||
+          col === 0 ||
+          col === C;
+
+        const point = {
+          baseX: col * W / C + (edge ? 0 : randomValue(row * 20 + col) * 24 - 12),
+          baseY: row * H / R + (edge ? 0 : randomValue(row * 30 + col + 100) * 20 - 10),
+          x: 0,
+          y: 0,
+          edge,
+          phase: randomValue(row * 71 + col * 17) * Math.PI * 2,
+          moveX: edge ? 0 : 7 + randomValue(row * 13 + col) * 12,
+          moveY: edge ? 0 : 5 + randomValue(row * 19 + col) * 10
+        };
+
+        points[row][col] = point;
+        allPoints.push(point);
+      }
+    }
+
+    let polygonIndex = 0;
+
+    for (let row = 0; row < R; row++) {
+      for (let col = 0; col < C; col++) {
+        const a = points[row][col];
+        const b = points[row][col + 1];
+        const c = points[row + 1][col];
+        const d = points[row + 1][col + 1];
+
+        const triangles =
+          (row + col) % 2
+            ? [[a, b, c], [b, d, c]]
+            : [[a, b, d], [a, d, c]];
+
+        triangles.forEach((triangle, index) => {
+          const element = document.createElementNS(svgNS, "polygon");
+
+          element.setAttribute(
+            "fill",
+            colors[(polygonIndex + index) % colors.length]
+          );
+
+          element.setAttribute("class", "facet");
+          mesh.appendChild(element);
+
+          polygons.push({
+            element,
+            points: triangle
+          });
+        });
+
+        polygonIndex++;
+      }
+    }
+
+    function smooth(value) {
+      return value * value * (3 - 2 * value);
+    }
+
+    let lastFrame = 0;
+    const frameInterval = 1000 / 30;
+
+    function animate(now) {
+      if (now - lastFrame < frameInterval) {
+        requestAnimationFrame(animate);
+        return;
+      }
+
+      lastFrame = now;
+      const time = now / 1000;
+
+      for (const point of allPoints) {
+        point.x = point.edge
+          ? point.baseX
+          : point.baseX +
+            Math.sin(time * .45 + point.phase) * point.moveX +
+            Math.cos(time * .27 + point.phase) * point.moveX * .25;
+
+        point.y = point.edge
+          ? point.baseY
+          : point.baseY +
+            Math.cos(time * .38 + point.phase) * point.moveY +
+            Math.sin(time * .24 + point.phase) * point.moveY * .25;
+      }
+
+      for (const polygon of polygons) {
+        polygon.element.setAttribute(
+          "points",
+          polygon.points
+            .map(point => `${point.x},${point.y}`)
+            .join(" ")
+        );
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      requestAnimationFrame(animate);
+    }
   </script>
 </body>
 </html>

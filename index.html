@@ -1,65 +1,1327 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Col Surebet — Calculadora</title>
-  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Col Surebet — Calculadora</title>
+
   <script src="https://telegram.org/js/telegram-web-app.js?64"></script>
-<style>
-:root{--ink:#eef1f4;--muted:#9eacb7;--soft:#718290;--gold:#e2bd58;--gold2:#f1d77e;--green:#a8d6bb;--red:#f1aaaa}
-@property --border-angle{syntax:"<angle>";inherits:false;initial-value:0deg}
-*{box-sizing:border-box;margin:0;padding:0}
-html{min-height:100%;background:#101b26}
-body{min-height:100svh;overflow-x:hidden;overflow-y:auto;position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;padding:28px 16px;color:var(--ink);font:15px Inter,Arial,sans-serif;background:#101b26}
-body:before{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 20%,rgba(3,7,12,.16) 60%,rgba(3,7,12,.82) 100%)}
-.terrain{position:fixed;inset:0;z-index:-1;width:100vw;height:100svh}.facet{stroke:rgba(183,211,232,.34);stroke-width:1.1;vector-effect:non-scaling-stroke}.vertex-glow{opacity:0;fill:#ffe28a;stroke:#fff2b8;stroke-width:1.05;filter:url(#vertexGlow);pointer-events:none}
-main{position:relative;z-index:2;width:min(100%,510px)}header{text-align:center;margin-bottom:22px}.brand{font-size:2rem;font-weight:900;letter-spacing:3px;text-shadow:0 4px 20px #0008}.sub{margin-top:5px;color:var(--gold2);font-size:.7rem;letter-spacing:3px;text-transform:uppercase}.tag{margin:10px auto 0;color:#bdc7cf;font-size:.84rem;line-height:1.4;max-width:340px}
-.card,.result-modal{position:relative;border:1px solid rgba(238,241,244,.18);background:linear-gradient(145deg,rgba(31,49,63,.94),rgba(14,27,38,.97));box-shadow:0 28px 80px #0009,0 0 40px rgba(86,126,157,.08);backdrop-filter:blur(16px)}.card{padding:20px;border-radius:26px}.card:before,.result-modal:before{content:"";position:absolute;inset:-1px;z-index:0;border-radius:inherit;padding:1.5px;background:conic-gradient(from var(--border-angle),transparent 0 45%,#e2bd58 53%,#2b63a6 64%,#d63e4a 75%,transparent 84% 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:borderOrbit 15s linear infinite;pointer-events:none}.card>*{position:relative;z-index:1}@keyframes borderOrbit{to{--border-angle:360deg}}
-.form-section{position:relative;z-index:1;padding:17px;border:1px solid rgba(238,241,244,.1);border-radius:18px;background:linear-gradient(145deg,rgba(16,31,43,.52),rgba(7,16,24,.3))}.form-section+.form-section{margin-top:11px}.form-section.picker-layer{z-index:60}
-.section-heading{display:flex;align-items:center;gap:10px;margin-bottom:14px}.section-icon{width:30px;height:30px;display:grid;place-items:center;flex:none;border:1px solid rgba(226,189,88,.35);border-radius:10px;background:rgba(226,189,88,.1);font-size:.9rem}.section-copy{display:block;flex:1;min-width:0}.section-label{color:var(--gold2);font-size:.7rem;font-weight:850;letter-spacing:1.6px;text-transform:uppercase;white-space:nowrap}.section-copy small{display:block;margin-top:3px;color:var(--soft);font-size:.66rem;line-height:1.2;white-space:normal;overflow:visible;text-overflow:clip}.section-heading:after{content:"";height:1px;flex:1;min-width:12px;background:linear-gradient(90deg,rgba(226,189,88,.4),transparent)}.section-heading,.section-heading *{user-select:none}
-label{display:block;margin:0 0 6px;color:var(--muted);font-size:.68rem;font-weight:800;letter-spacing:.65px;text-transform:uppercase}
-input{width:100%;height:46px;padding:0 13px;border:1px solid rgba(238,241,244,.15);border-radius:12px;outline:0;color:var(--ink);background:rgba(6,15,23,.72);font:600 .93rem Inter,Arial;transition:border .2s,box-shadow .2s,background .2s}input:focus{border-color:var(--gold);background:rgba(6,15,23,.9);box-shadow:0 0 0 3px rgba(226,189,88,.1)}input::placeholder{color:#6e7f8c}input[type=number]{-moz-appearance:textfield;appearance:textfield}input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;display:none}
-.money-wrap,.odd-wrap{position:relative}.money-wrap input{padding-left:51px}.currency,.odd-suffix{position:absolute;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--gold2);font-size:.65rem;font-weight:900;letter-spacing:.7px}.currency{left:14px}.odd-suffix{right:13px}.odd-wrap input{padding-right:38px}
-.house-grid,.capital-grid,.odds-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.house-grid>.field,.capital-grid>.field,.odds-grid>.field{margin-top:0!important}
-.house-picker{position:relative;z-index:1}.house-picker.open{z-index:120}.house-trigger{width:100%;height:46px;display:flex;align-items:center;gap:9px;padding:0 10px;border:1px solid rgba(238,241,244,.15);border-radius:12px;color:var(--ink);background:rgba(6,15,23,.72);font:600 .86rem Inter,Arial;text-align:left;cursor:pointer;transition:border .2s,background .2s,box-shadow .2s}.house-trigger:hover,.house-picker.open .house-trigger{border-color:var(--gold);background:rgba(6,15,23,.9);box-shadow:0 0 0 3px rgba(226,189,88,.08)}
-.house-mark{width:25px;height:25px;display:grid;place-items:center;flex:none;border:1px solid #ffffff42;border-radius:8px;color:#17232d;font-size:.64rem;font-weight:900;box-shadow:inset 0 1px 0 #fff5}.house-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chevron{color:var(--gold2);font-size:.85rem;transition:transform .2s}.house-picker.open .chevron{transform:rotate(180deg)}
-.house-menu{position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:200;isolation:isolate;padding:9px;border:1px solid rgba(226,189,88,.46);border-radius:14px;background:#152633;box-shadow:0 18px 45px #000b,0 0 25px rgba(226,189,88,.08);opacity:0;visibility:hidden;transform:translateY(-7px) scale(.98);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none}.house-picker.open .house-menu{opacity:1;visibility:visible;transform:translateY(0) scale(1);pointer-events:auto}
-.house-search{height:40px!important;margin:0 0 8px;padding:0 11px!important;border-color:#eef1f429!important;background:#091017!important;font-size:.82rem!important}.house-options{max-height:246px;overflow-y:auto;padding-right:2px}.house-options::-webkit-scrollbar{width:5px}.house-options::-webkit-scrollbar-thumb{background:#c9a84c88;border-radius:20px}.house-option{position:relative;z-index:1;width:100%;display:flex;align-items:center;gap:9px;padding:9px 8px;border:0;border-radius:8px;color:#dbe2e7;background:transparent;font:600 .84rem Inter,Arial;text-align:left;cursor:pointer;transition:background .16s,color .16s}.house-option:hover,.house-option.selected{color:var(--gold2);background:rgba(226,189,88,.16)}.house-option .house-mark{width:23px;height:23px;border-radius:7px;font-size:.62rem}.no-results{display:none;padding:12px;color:#8c9aa5;font-size:.78rem;text-align:center}
-.help-text{margin:-3px 0 12px;color:#91a1ad;font-size:.75rem;line-height:1.4}.capital-input{height:43px;font-size:.86rem}.odds-grid input{font-size:1rem;letter-spacing:.3px}.calculate{width:100%;height:50px;margin-top:14px;border:0;border-radius:13px;color:#17232d;background:linear-gradient(135deg,#b88b31,var(--gold2));font:900 .98rem Inter;cursor:pointer;box-shadow:0 10px 25px #e2bd5838;transition:transform .2s,filter .2s}.calculate:hover{filter:brightness(1.06);transform:translateY(-1px)}.notice{display:none;margin-top:12px;padding:12px 14px;border:1px solid rgba(241,170,170,.28);border-radius:12px;color:var(--red);background:rgba(95,30,34,.45);font-size:.82rem;line-height:1.4}.footer{text-align:center;margin-top:17px;color:#80909d;font-size:.68rem;letter-spacing:1px}.footer b{color:var(--gold2)}
-.modal-backdrop{display:none;position:fixed;inset:0;z-index:100;align-items:center;justify-content:center;padding:18px;overflow:hidden;background:rgba(3,8,14,.76);backdrop-filter:blur(9px)}.modal-backdrop.open{display:flex;animation:fadeIn .2s ease-out}.result-modal{width:min(430px,calc(100vw - 36px));max-height:calc(100svh - 36px);overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding:22px;border-radius:22px;animation:modalIn .24s ease-out}.result-modal::-webkit-scrollbar{width:0;height:0;display:none}.result-modal>*{position:relative;z-index:1}.modal-header{padding:2px 34px 17px 2px;border-bottom:1px solid rgba(238,241,244,.1)}.modal-kicker{color:var(--gold2);font-size:.67rem;font-weight:850;letter-spacing:1.8px;text-transform:uppercase}.modal-subtitle{margin-top:5px;color:var(--soft);font-size:.77rem}.modal-close{position:absolute;top:11px;right:12px;z-index:2;width:31px;height:31px;border:1px solid #eef1f42e;border-radius:50%;color:#dbe2e7;background:#080f1673;font:700 1.1rem Arial;cursor:pointer}.modal-close:hover{color:var(--gold2);border-color:var(--gold)}.results-stack{padding-top:10px}.payout-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px}.payout-card{min-width:0;padding:14px 11px;border:1px solid rgba(226,189,88,.46);border-radius:13px;background:linear-gradient(145deg,rgba(74,59,25,.34),rgba(6,15,23,.78));box-shadow:0 0 0 1px rgba(226,189,88,.08),0 10px 24px rgba(226,189,88,.12)}.payout-label{display:block;color:var(--soft);font-size:.66rem;font-weight:800;letter-spacing:.45px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.payout-value{display:block;margin-top:8px;color:var(--gold2);font-size:.88rem;font-weight:900;white-space:nowrap}.payout-profit{display:block;margin-top:8px;color:var(--gold2);font-size:.64rem;font-weight:800;letter-spacing:.35px;white-space:nowrap}.payout-benefit{display:block;margin-top:3px;color:var(--gold2);font-size:.9rem;font-weight:900;white-space:nowrap;text-shadow:0 0 12px rgba(241,215,126,.28)}.payout-percent{display:block;margin-top:4px;color:var(--green);font-size:.64rem;font-weight:800;white-space:nowrap}.result-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 13px;margin:8px 0;border:1px solid rgba(238,241,244,.1);border-radius:12px;background:rgba(6,15,23,.58)}.result-info{display:flex;align-items:center;gap:9px;min-width:0}.result-icon{width:25px;height:25px;display:grid;place-items:center;flex:none;border-radius:8px;background:rgba(226,189,88,.13);font-size:.78rem}.result-label{color:#b7c2ca;font-size:.81rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.result-value{color:var(--gold2);font-size:.92rem;font-weight:900;text-align:right;white-space:nowrap}.total-row{border-color:rgba(226,189,88,.23);background:rgba(226,189,88,.06)}.total-row .result-icon{background:rgba(226,189,88,.2)}.profit{margin-top:13px;padding:18px 14px;text-align:center;border:1px solid rgba(168,214,187,.27);border-radius:14px;background:linear-gradient(135deg,rgba(50,92,74,.35),rgba(11,24,23,.5))}.profit small{display:block;color:#9fc5ad;font-size:.68rem;font-weight:800;letter-spacing:1.4px;text-transform:uppercase}.profit strong{display:block;margin:7px 0 5px;color:var(--green);font-size:1.75rem}.profit em{color:var(--gold2);font-style:normal;font-weight:700;font-size:.77rem;line-height:1.35}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
-@media(max-width:430px){body{align-items:flex-start;justify-content:center;padding:calc(16px + env(safe-area-inset-top)) 11px calc(22px + env(safe-area-inset-bottom))}.brand{font-size:1.65rem;letter-spacing:2.2px}.sub{font-size:.64rem;letter-spacing:2.3px}.tag{font-size:.78rem;line-height:1.35}.card{padding:13px;border-radius:21px}.form-section{padding:14px;border-radius:16px}.section-heading{margin-bottom:12px}.section-copy small{display:block;font-size:.64rem}.section-label{font-size:.66rem}.house-grid,.capital-grid,.odds-grid{gap:8px}label{font-size:.64rem}.house-trigger{padding:0 8px;font-size:.78rem}.house-mark{width:23px;height:23px}.capital-input{padding:0 8px;font-size:.8rem}.result-modal{width:calc(100vw - 22px);max-height:calc(100svh - 30px);padding:18px;border-radius:19px}.modal-header{padding-bottom:14px}.result-row{padding:11px 10px}.result-label{font-size:.76rem}.result-value{font-size:.84rem}}@media(max-width:430px) and (max-height:720px){body{padding-top:11px}header{margin-bottom:13px}.form-section{padding:12px}.form-section+.form-section{margin-top:8px}.calculate{height:46px;margin-top:10px}}@media(prefers-reduced-motion:reduce){.card:before,.result-modal:before{animation:none}}
-</style>
+
+  <style>
+    :root{
+      --ink:#eef1f4;
+      --muted:#9eacb7;
+      --soft:#718290;
+      --gold:#e2bd58;
+      --gold2:#f1d77e;
+      --green:#a8d6bb;
+      --red:#f1aaaa;
+      --bg:#101b26;
+    }
+
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    html{
+      min-height:100%;
+      background:var(--bg);
+    }
+
+    body{
+      min-height:100svh;
+      overflow-x:hidden;
+      overflow-y:auto;
+      position:relative;
+      isolation:isolate;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px 16px;
+      color:var(--ink);
+      font:15px Arial,sans-serif;
+      background:
+        radial-gradient(circle at 50% 20%,#29465b 0%,transparent 42%),
+        linear-gradient(145deg,#1d3445,#0e1822 80%);
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      opacity:.2;
+      background-image:
+        linear-gradient(125deg,transparent 48%,#9ab2c322 49%,transparent 50%),
+        linear-gradient(35deg,transparent 48%,#9ab2c322 49%,transparent 50%);
+      background-size:120px 120px;
+    }
+
+    main{
+      position:relative;
+      z-index:2;
+      width:min(100%,510px);
+    }
+
+    header{
+      text-align:center;
+      margin-bottom:22px;
+    }
+
+    .brand{
+      font-size:2rem;
+      font-weight:900;
+      letter-spacing:3px;
+      text-shadow:0 4px 20px #0008;
+    }
+
+    .sub{
+      margin-top:5px;
+      color:var(--gold2);
+      font-size:.7rem;
+      letter-spacing:3px;
+      text-transform:uppercase;
+    }
+
+    .tag{
+      margin:10px auto 0;
+      color:#bdc7cf;
+      font-size:.84rem;
+      line-height:1.4;
+      max-width:340px;
+    }
+
+    .card{
+      position:relative;
+      padding:20px;
+      border:1px solid rgba(238,241,244,.18);
+      border-radius:26px;
+      background:linear-gradient(145deg,rgba(31,49,63,.96),rgba(14,27,38,.98));
+      box-shadow:0 28px 80px #0009;
+    }
+
+    .form-section{
+      position:relative;
+      z-index:1;
+      padding:17px;
+      border:1px solid rgba(238,241,244,.1);
+      border-radius:18px;
+      background:linear-gradient(145deg,rgba(16,31,43,.7),rgba(7,16,24,.35));
+      overflow:visible;
+    }
+
+    .form-section + .form-section{
+      margin-top:11px;
+    }
+
+    .section-heading{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:14px;
+    }
+
+    .section-icon{
+      width:30px;
+      height:30px;
+      display:grid;
+      place-items:center;
+      flex:none;
+      border:1px solid rgba(226,189,88,.35);
+      border-radius:10px;
+      background:rgba(226,189,88,.1);
+      font-size:.9rem;
+    }
+
+    .section-copy{
+      display:block;
+      flex:1;
+      min-width:0;
+    }
+
+    .section-label{
+      color:var(--gold2);
+      font-size:.7rem;
+      font-weight:850;
+      letter-spacing:1.6px;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+
+    .section-copy small{
+      display:block;
+      margin-top:3px;
+      color:var(--soft);
+      font-size:.66rem;
+      line-height:1.2;
+    }
+
+    label{
+      display:block;
+      margin:0 0 6px;
+      color:var(--muted);
+      font-size:.68rem;
+      font-weight:800;
+      letter-spacing:.65px;
+      text-transform:uppercase;
+    }
+
+    input{
+      width:100%;
+      height:46px;
+      padding:0 13px;
+      border:1px solid rgba(238,241,244,.15);
+      border-radius:12px;
+      outline:0;
+      color:var(--ink);
+      background:rgba(6,15,23,.72);
+      font:600 .93rem Arial,sans-serif;
+    }
+
+    input:focus{
+      border-color:var(--gold);
+      background:rgba(6,15,23,.9);
+      box-shadow:0 0 0 3px rgba(226,189,88,.1);
+    }
+
+    input::placeholder{
+      color:#6e7f8c;
+    }
+
+    input[type=number]{
+      appearance:textfield;
+      -moz-appearance:textfield;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button{
+      appearance:none;
+      display:none;
+    }
+
+    button{
+      font:inherit;
+    }
+
+    .money-wrap,
+    .odd-wrap{
+      position:relative;
+    }
+
+    .money-wrap input{
+      padding-left:51px;
+    }
+
+    .currency,
+    .odd-suffix{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      pointer-events:none;
+      color:var(--gold2);
+      font-size:.65rem;
+      font-weight:900;
+      letter-spacing:.7px;
+    }
+
+    .currency{
+      left:14px;
+    }
+
+    .odd-suffix{
+      right:13px;
+    }
+
+    .odd-wrap input{
+      padding-right:38px;
+    }
+
+    .house-grid,
+    .capital-grid,
+    .odds-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+      gap:10px;
+      width:100%;
+    }
+
+    .house-grid > .field,
+    .capital-grid > .field,
+    .odds-grid > .field{
+      min-width:0;
+    }
+
+    .house-picker{
+      position:relative;
+      z-index:2;
+      min-width:0;
+    }
+
+    .house-picker.open{
+      z-index:20;
+    }
+
+    .house-trigger{
+      width:100%;
+      height:46px;
+      min-width:0;
+      display:flex;
+      align-items:center;
+      gap:9px;
+      padding:0 10px;
+      border:1px solid rgba(238,241,244,.15);
+      border-radius:12px;
+      color:var(--ink);
+      background:rgba(6,15,23,.72);
+      text-align:left;
+      cursor:pointer;
+      overflow:hidden;
+    }
+
+    .house-trigger:hover,
+    .house-picker.open .house-trigger{
+      border-color:var(--gold);
+      background:rgba(6,15,23,.9);
+    }
+
+    .house-mark{
+      width:25px;
+      height:25px;
+      display:grid;
+      place-items:center;
+      flex:none;
+      border:1px solid #ffffff42;
+      border-radius:8px;
+      color:#17232d;
+      font-size:.64rem;
+      font-weight:900;
+    }
+
+    .house-name{
+      flex:1;
+      min-width:0;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .chevron{
+      flex:none;
+      color:var(--gold2);
+      font-size:.85rem;
+    }
+
+    .house-picker.open .chevron{
+      transform:rotate(180deg);
+    }
+
+    .house-menu{
+      position:absolute;
+      left:0;
+      right:0;
+      top:calc(100% + 8px);
+      z-index:50;
+      padding:9px;
+      border:1px solid rgba(226,189,88,.46);
+      border-radius:14px;
+      background:#152633;
+      box-shadow:0 18px 45px #000b;
+      opacity:0;
+      visibility:hidden;
+      transform:translateY(-7px);
+      pointer-events:none;
+    }
+
+    .house-picker.open .house-menu{
+      opacity:1;
+      visibility:visible;
+      transform:translateY(0);
+      pointer-events:auto;
+    }
+
+    .house-search{
+      height:40px!important;
+      margin:0 0 8px;
+      padding:0 11px!important;
+      font-size:.82rem!important;
+    }
+
+    .house-options{
+      max-height:246px;
+      overflow-y:auto;
+    }
+
+    .house-option{
+      width:100%;
+      display:flex;
+      align-items:center;
+      gap:9px;
+      padding:9px 8px;
+      border:0;
+      border-radius:8px;
+      color:#dbe2e7;
+      background:transparent;
+      text-align:left;
+      cursor:pointer;
+    }
+
+    .house-option:hover,
+    .house-option.selected{
+      color:var(--gold2);
+      background:rgba(226,189,88,.16);
+    }
+
+    .house-option .house-mark{
+      width:23px;
+      height:23px;
+      border-radius:7px;
+      font-size:.62rem;
+    }
+
+    .no-results{
+      display:none;
+      padding:12px;
+      color:#8c9aa5;
+      font-size:.78rem;
+      text-align:center;
+    }
+
+    .help-text{
+      margin:-3px 0 12px;
+      color:#91a1ad;
+      font-size:.75rem;
+      line-height:1.4;
+    }
+
+    .capital-input{
+      height:43px;
+      font-size:.86rem;
+    }
+
+    .odds-grid input{
+      font-size:1rem;
+      letter-spacing:.3px;
+    }
+
+    .calculate{
+      width:100%;
+      height:50px;
+      margin-top:14px;
+      border:0;
+      border-radius:13px;
+      color:#17232d;
+      background:linear-gradient(135deg,#b88b31,var(--gold2));
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 10px 25px #e2bd5838;
+    }
+
+    .calculate:hover{
+      filter:brightness(1.06);
+    }
+
+    .notice{
+      display:none;
+      margin-top:12px;
+      padding:12px 14px;
+      border:1px solid rgba(241,170,170,.28);
+      border-radius:12px;
+      color:var(--red);
+      background:rgba(95,30,34,.45);
+      font-size:.82rem;
+      line-height:1.4;
+    }
+
+    .footer{
+      margin-top:17px;
+      color:#80909d;
+      font-size:.68rem;
+      letter-spacing:1px;
+      text-align:center;
+    }
+
+    .footer b{
+      color:var(--gold2);
+    }
+
+    .modal-backdrop{
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:100;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      overflow:hidden;
+      background:rgba(3,8,14,.76);
+    }
+
+    .modal-backdrop.open{
+      display:flex;
+    }
+
+    .result-modal{
+      position:relative;
+      width:min(430px,calc(100vw - 36px));
+      max-height:calc(100svh - 36px);
+      overflow-y:auto;
+      padding:22px;
+      border:1px solid rgba(238,241,244,.18);
+      border-radius:22px;
+      background:linear-gradient(145deg,rgba(31,49,63,.98),rgba(14,27,38,.99));
+      box-shadow:0 28px 80px #000b;
+    }
+
+    .modal-header{
+      padding:2px 34px 17px 2px;
+      border-bottom:1px solid rgba(238,241,244,.1);
+    }
+
+    .modal-kicker{
+      color:var(--gold2);
+      font-size:.67rem;
+      font-weight:850;
+      letter-spacing:1.8px;
+      text-transform:uppercase;
+    }
+
+    .modal-subtitle{
+      margin-top:5px;
+      color:var(--soft);
+      font-size:.77rem;
+    }
+
+    .modal-close{
+      position:absolute;
+      top:11px;
+      right:12px;
+      width:31px;
+      height:31px;
+      border:1px solid #eef1f42e;
+      border-radius:50%;
+      color:#dbe2e7;
+      background:#080f1673;
+      font-size:1.1rem;
+      cursor:pointer;
+    }
+
+    .results-stack{
+      padding-top:10px;
+    }
+
+    .result-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:12px 13px;
+      margin:8px 0;
+      border:1px solid rgba(238,241,244,.1);
+      border-radius:12px;
+      background:rgba(6,15,23,.58);
+    }
+
+    .result-info{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      min-width:0;
+    }
+
+    .result-icon{
+      width:25px;
+      height:25px;
+      display:grid;
+      place-items:center;
+      flex:none;
+      border-radius:8px;
+      background:rgba(226,189,88,.13);
+      font-size:.78rem;
+    }
+
+    .result-label{
+      min-width:0;
+      color:#b7c2ca;
+      font-size:.81rem;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .result-value{
+      color:var(--gold2);
+      font-size:.92rem;
+      font-weight:900;
+      text-align:right;
+      white-space:nowrap;
+    }
+
+    .total-row{
+      border-color:rgba(226,189,88,.23);
+      background:rgba(226,189,88,.06);
+    }
+
+    .payout-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+      gap:8px;
+      margin:0 0 10px;
+    }
+
+    .payout-card{
+      min-width:0;
+      padding:14px 11px;
+      border:1px solid rgba(226,189,88,.46);
+      border-radius:13px;
+      background:linear-gradient(145deg,rgba(74,59,25,.34),rgba(6,15,23,.78));
+    }
+
+    .payout-label{
+      display:block;
+      color:var(--soft);
+      font-size:.66rem;
+      font-weight:800;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .payout-value{
+      display:block;
+      margin-top:8px;
+      color:var(--gold2);
+      font-size:.88rem;
+      font-weight:900;
+      white-space:nowrap;
+    }
+
+    .payout-profit{
+      display:block;
+      margin-top:8px;
+      color:var(--gold2);
+      font-size:.64rem;
+      font-weight:800;
+    }
+
+    .payout-benefit{
+      display:block;
+      margin-top:3px;
+      color:var(--gold2);
+      font-size:.9rem;
+      font-weight:900;
+      white-space:nowrap;
+    }
+
+    .payout-percent{
+      display:block;
+      margin-top:4px;
+      color:var(--green);
+      font-size:.64rem;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .profit{
+      margin-top:13px;
+      padding:18px 14px;
+      text-align:center;
+      border:1px solid rgba(168,214,187,.27);
+      border-radius:14px;
+      background:linear-gradient(135deg,rgba(50,92,74,.35),rgba(11,24,23,.5));
+    }
+
+    .profit small{
+      display:block;
+      color:#9fc5ad;
+      font-size:.68rem;
+      font-weight:800;
+      letter-spacing:1.4px;
+      text-transform:uppercase;
+    }
+
+    .profit strong{
+      display:block;
+      margin:7px 0 5px;
+      color:var(--green);
+      font-size:1.75rem;
+    }
+
+    @media(max-width:600px){
+      body{
+        align-items:flex-start;
+        padding:16px 11px 22px;
+      }
+
+      main{
+        width:100%;
+      }
+
+      header{
+        margin-bottom:14px;
+      }
+
+      .brand{
+        font-size:1.65rem;
+        letter-spacing:2.2px;
+      }
+
+      .sub{
+        font-size:.64rem;
+        letter-spacing:2.3px;
+      }
+
+      .tag{
+        font-size:.78rem;
+      }
+
+      .card{
+        padding:13px;
+        border-radius:21px;
+      }
+
+      .form-section{
+        padding:14px;
+        border-radius:16px;
+      }
+
+      .house-grid,
+      .capital-grid,
+      .odds-grid{
+        gap:8px;
+      }
+
+      .house-trigger{
+        padding:0 8px;
+        font-size:.78rem;
+      }
+
+      .capital-input{
+        padding:0 8px;
+        font-size:.8rem;
+      }
+
+      .result-modal{
+        width:calc(100vw - 22px);
+        max-height:calc(100svh - 30px);
+        padding:18px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<svg class="terrain" viewBox="0 0 1600 1000" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="base" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#263b4b"/><stop offset=".5" stop-color="#172734"/><stop offset="1" stop-color="#0e1822"/></linearGradient><filter id="vertexGlow" x="-250%" y="-250%" width="500%" height="500%"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect width="100%" height="100%" fill="url(#base)"></rect><g id="mesh"></g><g id="vertexPoints"></g></svg>
-<main><header><div class="brand">COL SUREBET</div><div class="sub">Arbitrage &amp; Analytics</div><div class="tag">Calcula la distribución de tus apuestas con tu capital</div></header>
-<section class="card">
-<div class="form-section"><div class="section-heading"><span class="section-icon">💰</span><div class="section-copy"><span class="section-label">Tu inversión</span><small>Capital disponible</small></div></div><label for="capital">Capital total</label><div class="money-wrap"><span class="currency">COP</span><input id="capital" inputmode="numeric" autocomplete="off" placeholder="Ej: 500.000"></div></div>
-<div class="form-section"><div class="section-heading"><span class="section-icon">🏦</span><div class="section-copy"><span class="section-label">Casas de apuestas</span><small>Elige dos operadores</small></div></div><div class="house-grid"><div class="field"><label>Casa 1</label><div class="house-picker" data-picker="house1" data-value=""><button type="button" class="house-trigger"><span class="house-mark">?</span><span class="house-name">Selecciona una casa</span><span class="chevron">⌄</span></button><div class="house-menu"><input class="house-search" placeholder="Buscar casa..." autocomplete="off"><div class="house-options"></div><div class="no-results">No se encontró esa casa</div></div></div></div><div class="field"><label>Casa 2</label><div class="house-picker" data-picker="house2" data-value=""><button type="button" class="house-trigger"><span class="house-mark">?</span><span class="house-name">Selecciona una casa</span><span class="chevron">⌄</span></button><div class="house-menu"><input class="house-search" placeholder="Buscar casa..." autocomplete="off"><div class="house-options"></div><div class="no-results">No se encontró esa casa</div></div></div></div></div></div>
-<div class="form-section"><div class="section-heading"><span class="section-icon">💼</span><div class="section-copy"><span class="section-label">Capital por casa</span><small>Opcional</small></div></div><p class="help-text">Ingresa uno para calcular el otro, o ambos para sumar el capital apostado.</p><div class="capital-grid"><div class="field"><label for="stake1">Capital casa 1</label><div class="money-wrap"><span class="currency">COP</span><input class="capital-input" id="stake1" inputmode="numeric" autocomplete="off" placeholder="50.000"></div></div><div class="field"><label for="stake2">Capital casa 2</label><div class="money-wrap"><span class="currency">COP</span><input class="capital-input" id="stake2" inputmode="numeric" autocomplete="off" placeholder="50.000"></div></div></div></div>
-<div class="form-section"><div class="section-heading"><span class="section-icon">📊</span><div class="section-copy"><span class="section-label">Cuotas del evento</span><small>Valores decimales</small></div></div><div class="odds-grid"><div class="field"><label for="odd1">Cuota casa 1</label><div class="odd-wrap"><input id="odd1" type="number" min="1.01" step=".01" placeholder="2.10"><span class="odd-suffix">X</span></div></div><div class="field"><label for="odd2">Cuota casa 2</label><div class="odd-wrap"><input id="odd2" type="number" min="1.01" step=".01" placeholder="2.20"><span class="odd-suffix">X</span></div></div></div></div>
-<button class="calculate" id="calculate">⚡ Calcular operación</button><div class="notice" id="notice"></div></section>
-<div class="footer"><b>COL SUREBET</b> — ARBITRAGE &amp; ANALYTICS 🇨🇴</div></main>
-<div class="modal-backdrop" id="resultModal"><section class="result-modal" role="dialog" aria-modal="true" aria-labelledby="resultTitle"><button class="modal-close" id="closeModal" aria-label="Cerrar">×</button><div class="modal-header"><div class="modal-kicker">🏆 Resultado de la operación</div><div class="modal-subtitle" id="resultTitle">Distribución calculada para tu estrategia</div></div><div class="results-stack" id="rows"></div></section></div>
-<script>
-const houses=["Betano","Stake","Codere","YaJuego","Rivalo","Betsson","Sportium","BetPlay","Wplay","Zamba","Luckia","Rushbet","Bwin"],houseColors=["#37b5e8","#54c878","#e65c64","#ef9b3d","#df4d4d","#318bd6","#8da3b5","#e4b83f","#f28a37","#956b4f","#57b987","#e85e47","#3975d1"],initials=n=>n==="YaJuego"?"YJ":n.slice(0,2).toUpperCase();
-function createOption(p,n,i){const x=document.createElement("div");x.className="house-option";x.dataset.name=n;x.innerHTML='<span class="house-mark" style="background:'+houseColors[i]+'">'+initials(n)+'</span><span>'+n+'</span>';p.querySelector(".house-options").appendChild(x)}
-function otherValue(p){const o=[...document.querySelectorAll(".house-picker")].find(x=>x!==p);return o?o.dataset.value:""}
-function filter(p){const q=p.querySelector(".house-search").value.toLowerCase().trim(),blocked=otherValue(p);let count=0;p.querySelectorAll(".house-option").forEach(x=>{const show=x.dataset.name!==blocked&&x.dataset.name.toLowerCase().includes(q);x.style.display=show?"flex":"none";if(show)count++});p.querySelector(".no-results").style.display=count?"none":"block"}
-function closePicker(p){p.classList.remove("open");const section=p.closest(".form-section");if(section)section.classList.remove("picker-layer")}
-function closeAllPickers(){document.querySelectorAll(".house-picker.open").forEach(closePicker)}
-function sync(){document.querySelectorAll(".house-picker").forEach(filter)}
-document.querySelectorAll(".house-picker").forEach(p=>{houses.forEach((n,i)=>createOption(p,n,i));const t=p.querySelector(".house-trigger"),m=p.querySelector(".house-menu"),s=p.querySelector(".house-search"),o=p.querySelector(".house-options"),section=p.closest(".form-section");t.addEventListener("click",e=>{e.stopPropagation();document.querySelectorAll(".house-picker.open").forEach(x=>{if(x!==p)closePicker(x)});const open=!p.classList.contains("open");p.classList.toggle("open",open);section.classList.toggle("picker-layer",open);if(open){filter(p);setTimeout(()=>s.focus(),50)}});m.addEventListener("click",e=>e.stopPropagation());s.addEventListener("input",()=>filter(p));o.addEventListener("click",e=>{const x=e.target.closest(".house-option");if(!x||x.style.display==="none")return;const n=x.dataset.name,i=houses.indexOf(n);t.querySelector(".house-mark").textContent=initials(n);t.querySelector(".house-mark").style.background=houseColors[i];t.querySelector(".house-name").textContent=n;p.dataset.value=n;o.querySelectorAll(".house-option").forEach(y=>y.classList.remove("selected"));x.classList.add("selected");s.value="";closePicker(p);sync()})});
-document.addEventListener("click",closeAllPickers);
-function formatIntegerInput(input){input.addEventListener("input",()=>{const d=input.value.replace(/[^0-9]/g,"");input.value=d?Number(d).toLocaleString("es-CO"):""})}
-const capital=document.getElementById("capital"),stake1Input=document.getElementById("stake1"),stake2Input=document.getElementById("stake2");[capital,stake1Input,stake2Input].forEach(formatIntegerInput);
-const parseMoney=input=>Number(input.value.replace(/[^0-9]/g,""))||0,round100=v=>Math.round(v/100)*100,money=v=>{const n=round100(v);return(n<0?"-$":"$")+Math.abs(n).toLocaleString("es-CO")+" COP"},notice=m=>{const n=document.getElementById("notice");n.textContent=m;n.style.display="block"};
-const modal=document.getElementById("resultModal"),closeModal=()=>modal.classList.remove("open");document.getElementById("closeModal").addEventListener("click",closeModal);modal.addEventListener("click",e=>{if(e.target===modal)closeModal()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
-function resultRow(icon,label,value,extra=""){return '<div class="result-row '+extra+'"><div class="result-info"><span class="result-icon">'+icon+'</span><span class="result-label">'+label+'</span></div><span class="result-value">'+value+'</span></div>'}
-document.getElementById("calculate").addEventListener("click",()=>{document.getElementById("notice").style.display="none";const totalEntered=parseMoney(capital),entered1=parseMoney(stake1Input),entered2=parseMoney(stake2Input),p1=document.querySelector('[data-picker="house1"]'),p2=document.querySelector('[data-picker="house2"]'),h1=p1.dataset.value,h2=p2.dataset.value,a=Number(document.getElementById("odd1").value),b=Number(document.getElementById("odd2").value);if(!h1||!h2)return notice("Selecciona las dos casas de apuestas.");if(h1===h2)return notice("Selecciona dos casas de apuestas diferentes.");if(!a||!b||a<=1||b<=1)return notice("Ingresa ambas cuotas, mayores que 1.");const implied=1/a+1/b;if(implied>=1)return notice("Estas cuotas no forman una surebet válida. La suma de probabilidades implícitas debe ser menor al 100%.");let stake1,stake2,total,mode;if(entered1&&entered2){stake1=round100(entered1);stake2=round100(entered2);total=stake1+stake2;mode="capitales ingresados"}else if(entered1){stake1=round100(entered1);stake2=round100(stake1*a/b);total=stake1+stake2;mode="capital casa 1 + cálculo casa 2"}else if(entered2){stake2=round100(entered2);stake1=round100(stake2*b/a);total=stake1+stake2;mode="capital casa 2 + cálculo casa 1"}else if(totalEntered){const used=round100(totalEntered);stake1=round100(used*(1/a)/implied);stake2=used-stake1;total=used;mode="distribución proporcional"}else return notice("Ingresa el capital total o el capital de al menos una casa.");const return1=stake1*a,return2=stake2*b,guaranteed=Math.min(return1,return2),profit=guaranteed-total,roi=total?profit/total*100:0;document.getElementById("rows").innerHTML=resultRow("💼","Capital total apostado",money(total),"total-row")+'<div class="payout-grid"><div class="payout-card"><span class="payout-label">💰 Recibes en '+h1+'</span><strong class="payout-value">'+money(return1)+'</strong><small class="payout-profit">Beneficio teórico</small><strong class="payout-benefit">'+money(return1-total)+'</strong><small class="payout-percent">'+((return1-total)/total*100).toFixed(2)+'% de beneficio</small></div><div class="payout-card"><span class="payout-label">💰 Recibes en '+h2+'</span><strong class="payout-value">'+money(return2)+'</strong><small class="payout-profit">Beneficio teórico</small><strong class="payout-benefit">'+money(return2-total)+'</strong><small class="payout-percent">'+((return2-total)/total*100).toFixed(2)+'% de beneficio</small></div></div>';modal.classList.add("open")});
-const NS="http://www.w3.org/2000/svg",g=document.getElementById("mesh"),layer=document.getElementById("vertexPoints"),W=1600,H=1000,C=16,R=10,DURATION=2000,COUNT=7,rnd=n=>{const x=Math.sin(n*12.9898+37)*43758.5453;return x-Math.floor(x)},smooth=x=>x*x*(3-2*x),colors=["#2b4354","#2f4b5d","#263d4c","#37546a","#223746","#3e5c70","#294354","#1d3241"],pts=[],all=[];for(let r=0;r<=R;r++){pts[r]=[];for(let c=0;c<=C;c++){const edge=!r||r===R||!c||c===C,p={bx:c*W/C+(edge?0:rnd(r*20+c)*28-14),by:r*H/R+(edge?0:rnd(r*30+c+100)*22-11),x:0,y:0,edge,phase:rnd(r*71+c*17)*Math.PI*2,ax:edge?0:8+rnd(r*13+c)*16,ay:edge?0:6+rnd(r*19+c)*13};pts[r][c]=p;all.push(p)}}const polygons=[];let k=0;for(let r=0;r<R;r++)for(let c=0;c<C;c++){const a=pts[r][c],b=pts[r][c+1],d=pts[r+1][c],e=pts[r+1][c+1],tris=(r+c)%2?[[a,b,d],[b,e,d]]:[[a,b,e],[a,e,d]];tris.forEach((q,i)=>{const el=document.createElementNS(NS,"polygon");el.setAttribute("fill",colors[Math.floor(rnd(k+i+1)*colors.length)]);el.setAttribute("class","facet");g.appendChild(el);polygons.push({el,pts:q})});k++}const states=[];for(let i=0;i<COUNT;i++){const el=document.createElementNS(NS,"circle");el.setAttribute("r","4");el.setAttribute("class","vertex-glow");layer.appendChild(el);let active;do{active=all[Math.floor(Math.random()*all.length)]}while(states.some(s=>s.active===active));states.push({el,active,cycleStart:performance.now()-i*(DURATION/COUNT)})}const start=performance.now(),next=excluded=>{let p;do{p=all[Math.floor(Math.random()*all.length)]}while(p===excluded);return p};function animate(now){const t=(now-start)/1000;for(const row of pts)for(const p of row){p.x=p.edge?p.bx:p.bx+Math.sin(t*.45+p.phase)*p.ax+Math.cos(t*.27+p.phase*1.7)*p.ax*.35;p.y=p.edge?p.by:p.by+Math.cos(t*.38+p.phase)*p.ay+Math.sin(t*.24+p.phase*.8)*p.ay*.35}for(const item of polygons)item.el.setAttribute("points",item.pts.map(p=>p.x+","+p.y).join(" "));for(const s of states){let q=(now-s.cycleStart)/DURATION;if(q>=1){s.active=next(s.active);s.cycleStart=now;q=0}const fi=smooth(Math.min(1,q/.22)),fo=1-smooth(Math.max(0,(q-.72)/.28));s.el.setAttribute("cx",s.active.x);s.el.setAttribute("cy",s.active.y);s.el.style.opacity=Math.min(fi,fo).toFixed(3)}requestAnimationFrame(animate)}requestAnimationFrame(animate);
-</script>
+  <main>
+    <header>
+      <div class="brand">COL SUREBET</div>
+      <div class="sub">Arbitrage &amp; Analytics</div>
+      <div class="tag">
+        Calcula la distribución de tus apuestas con tu capital
+      </div>
+    </header>
+
+    <section class="card">
+
+      <div class="form-section">
+        <div class="section-heading">
+          <span class="section-icon">💰</span>
+          <div class="section-copy">
+            <span class="section-label">Tu inversión</span>
+            <small>Capital disponible</small>
+          </div>
+        </div>
+
+        <label for="capital">Capital total</label>
+
+        <div class="money-wrap">
+          <span class="currency">COP</span>
+          <input
+            id="capital"
+            inputmode="numeric"
+            autocomplete="off"
+            placeholder="Ej: 500.000"
+          >
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-heading">
+          <span class="section-icon">🏦</span>
+          <div class="section-copy">
+            <span class="section-label">Casas de apuestas</span>
+            <small>Elige dos operadores</small>
+          </div>
+        </div>
+
+        <div class="house-grid">
+          <div class="field">
+            <label>Casa 1</label>
+
+            <div class="house-picker" data-picker="house1" data-value="">
+              <button type="button" class="house-trigger">
+                <span class="house-mark">?</span>
+                <span class="house-name">Selecciona una casa</span>
+                <span class="chevron">⌄</span>
+              </button>
+
+              <div class="house-menu">
+                <input
+                  class="house-search"
+                  placeholder="Buscar casa..."
+                  autocomplete="off"
+                >
+
+                <div class="house-options"></div>
+
+                <div class="no-results">
+                  No se encontró esa casa
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Casa 2</label>
+
+            <div class="house-picker" data-picker="house2" data-value="">
+              <button type="button" class="house-trigger">
+                <span class="house-mark">?</span>
+                <span class="house-name">Selecciona una casa</span>
+                <span class="chevron">⌄</span>
+              </button>
+
+              <div class="house-menu">
+                <input
+                  class="house-search"
+                  placeholder="Buscar casa..."
+                  autocomplete="off"
+                >
+
+                <div class="house-options"></div>
+
+                <div class="no-results">
+                  No se encontró esa casa
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-heading">
+          <span class="section-icon">💼</span>
+          <div class="section-copy">
+            <span class="section-label">Capital por casa</span>
+            <small>Opcional</small>
+          </div>
+        </div>
+
+        <p class="help-text">
+          Ingresa uno para calcular el otro, o ambos para sumar el capital apostado.
+        </p>
+
+        <div class="capital-grid">
+          <div class="field">
+            <label for="stake1">Capital casa 1</label>
+
+            <div class="money-wrap">
+              <span class="currency">COP</span>
+              <input
+                class="capital-input"
+                id="stake1"
+                inputmode="numeric"
+                autocomplete="off"
+                placeholder="50.000"
+              >
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="stake2">Capital casa 2</label>
+
+            <div class="money-wrap">
+              <span class="currency">COP</span>
+              <input
+                class="capital-input"
+                id="stake2"
+                inputmode="numeric"
+                autocomplete="off"
+                placeholder="50.000"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-heading">
+          <span class="section-icon">📊</span>
+          <div class="section-copy">
+            <span class="section-label">Cuotas del evento</span>
+            <small>Valores decimales</small>
+          </div>
+        </div>
+
+        <div class="odds-grid">
+          <div class="field">
+            <label for="odd1">Cuota casa 1</label>
+
+            <div class="odd-wrap">
+              <input
+                id="odd1"
+                type="number"
+                min="1.01"
+                step=".01"
+                placeholder="2.10"
+              >
+              <span class="odd-suffix">X</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="odd2">Cuota casa 2</label>
+
+            <div class="odd-wrap">
+              <input
+                id="odd2"
+                type="number"
+                min="1.01"
+                step=".01"
+                placeholder="2.20"
+              >
+              <span class="odd-suffix">X</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="calculate" id="calculate" type="button">
+        ⚡ Calcular operación
+      </button>
+
+      <div class="notice" id="notice"></div>
+
+      <div class="footer">
+        <b>COL SUREBET</b> — ARBITRAGE &amp; ANALYTICS 🇨🇴
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="resultModal">
+    <section class="result-modal" role="dialog" aria-modal="true">
+      <button class="modal-close" id="closeModal" type="button">×</button>
+
+      <div class="modal-header">
+        <div class="modal-kicker">🏆 Resultado de la operación</div>
+        <div class="modal-subtitle">
+          Distribución calculada para tu estrategia
+        </div>
+      </div>
+
+      <div class="results-stack" id="rows"></div>
+    </section>
+  </div>
+
+  <script>
+    const telegram = window.Telegram && window.Telegram.WebApp;
+
+    if (telegram) {
+      telegram.ready();
+      telegram.expand();
+
+      if (telegram.setHeaderColor) {
+        telegram.setHeaderColor("#101b26");
+      }
+
+      if (telegram.setBackgroundColor) {
+        telegram.setBackgroundColor("#101b26");
+      }
+    }
+
+    const houses = [
+      "Betano",
+      "Stake",
+      "Codere",
+      "YaJuego",
+      "Rivalo",
+      "Betsson",
+      "Sportium",
+      "BetPlay",
+      "Wplay",
+      "Zamba",
+      "Luckia",
+      "Rushbet",
+      "Bwin"
+    ];
+
+    const houseColors = [
+      "#37b5e8",
+      "#54c878",
+      "#e65c64",
+      "#ef9b3d",
+      "#df4d4d",
+      "#318bd6",
+      "#8da3b5",
+      "#e4b83f",
+      "#f28a37",
+      "#956b4f",
+      "#57b987",
+      "#e85e47",
+      "#3975d1"
+    ];
+
+    function initials(name) {
+      return name === "YaJuego"
+        ? "YJ"
+        : name.slice(0, 2).toUpperCase();
+    }
+
+    function createHouseOption(picker, name, index) {
+      const option = document.createElement("button");
+
+      option.type = "button";
+      option.className = "house-option";
+      option.dataset.name = name;
+
+      option.innerHTML = `
+        <span class="house-mark" style="background:${houseColors[index]}">
+          ${initials(name)}
+        </span>
+        <span>${name}</span>
+      `;
+
+      picker.querySelector(".house-options").appendChild(option);
+    }
+
+    function otherHouseValue(picker) {
+      const other = [...document.querySelectorAll(".house-picker")]
+        .find(item => item !== picker);
+
+      return other ? other.dataset.value : "";
+    }
+
+    function filterHouses(picker) {
+      const search = picker
+        .querySelector(".house-search")
+        .value
+        .toLowerCase()
+        .trim();
+
+      const blocked = otherHouseValue(picker);
+      let visible = 0;
+
+      picker.querySelectorAll(".house-option").forEach(option => {
+        const name = option.dataset.name;
+
+        const show =
+          name !== blocked &&
+          name.toLowerCase().includes(search);
+
+        option.style.display = show ? "flex" : "none";
+
+        if (show) {
+          visible++;
+        }
+      });
+
+      picker.querySelector(".no-results").style.display =
+        visible ? "none" : "block";
+    }
+
+    function closePicker(picker) {
+      picker.classList.remove("open");
+
+      const section = picker.closest(".form-section");
+
+      if (section) {
+        section.style.zIndex = "";
+      }
+    }
+
+    function closeAllPickers() {
+      document
+        .querySelectorAll(".house-picker.open")
+        .forEach(closePicker);
+    }
+
+    function syncPickers() {
+      document
+        .querySelectorAll(".house-picker")
+        .forEach(filterHouses);
+    }
+
+    document.querySelectorAll(".house-picker").forEach(picker => {
+      houses.forEach((name, index) => {
+        createHouseOption(picker, name, index);
+      });
+
+      const trigger = picker.querySelector(".house-trigger");
+      const menu = picker.querySelector(".house-menu");
+      const search = picker.querySelector(".house-search");
+      const options = picker.querySelector(".house-options");
+
+      trigger.addEventListener("click", event => {
+        event.stopPropagation();
+
+        document
+          .querySelectorAll(".house-picker.open")
+          .forEach(openPicker => {
+            if (openPicker !== picker) {
+              closePicker(openPicker);
+            }
+          });
+
+        const isOpen = !picker.classList.contains("open");
+
+        picker.classList.toggle("open", isOpen);
+
+        const section = picker.closest(".form-section");
+
+        if (section) {
+          section.style.zIndex = isOpen ? "30" : "";
+        }
+
+        if (isOpen) {
+          filterHouses(picker);
+          setTimeout(() => search.focus(), 50);
+        }
+      });
+
+      menu.addEventListener("click", event => {
+        event.stopPropagation();
+      });
+
+      search.addEventListener("input", () => {
+        filterHouses(picker);
+      });
+
+      options.addEventListener("click", event => {
+        const option = event.target.closest(".house-option");
+
+        if (!option || option.style.display === "none") {
+          return;
+        }
+
+        const name = option.dataset.name;
+        const index = houses.indexOf(name);
+
+        trigger.querySelector(".house-mark").textContent = initials(name);
+        trigger.querySelector(".house-mark").style.background =
+          houseColors[index];
+
+        trigger.querySelector(".house-name").textContent = name;
+        picker.dataset.value = name;
+
+        options
+          .querySelectorAll(".house-option")
+          .forEach(item => item.classList.remove("selected"));
+
+        option.classList.add("selected");
+        search.value = "";
+
+        closePicker(picker);
+        syncPickers();
+      });
+    });
+
+    document.addEventListener("click", closeAllPickers);
+
+    function formatIntegerInput(input) {
+      input.addEventListener("input", () => {
+        const digits = input.value.replace(/[^0-9]/g, "");
+
+        input.value = digits
+          ? Number(digits).toLocaleString("es-CO")
+          : "";
+      });
+    }
+
+    const capital = document.getElementById("capital");
+    const stake1Input = document.getElementById("stake1");
+    const stake2Input = document.getElementById("stake2");
+
+    [
+      capital,
+      stake1Input,
+      stake2Input
+    ].forEach(formatIntegerInput);
+
+    function parseMoney(input) {
+      return Number(input.value.replace(/[^0-9]/g, "")) || 0;
+    }
+
+    function round100(value) {
+      return Math.round(value / 100) * 100;
+    }
+
+    function money(value) {
+      const rounded = round100(value);
+
+      return (
+        "$" +
+        Math.abs(rounded).toLocaleString("es-CO") +
+        " COP"
+      );
+    }
+
+    function showNotice(message) {
+      const notice = document.getElementById("notice");
+
+      notice.textContent = message;
+      notice.style.display = "block";
+    }
+
+    function resultRow(icon, label, value, extra = "") {
+      return `
+        <div class="result-row ${extra}">
+          <div class="result-info">
+            <span class="result-icon">${icon}</span>
+            <span class="result-label">${label}</span>
+          </div>
+          <span class="result-value">${value}</span>
+        </div>
+      `;
+    }
+
+    const modal = document.getElementById("resultModal");
+    const closeModalButton = document.getElementById("closeModal");
+
+    function closeModal() {
+      modal.classList.remove("open");
+    }
+
+    closeModalButton.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", event => {
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    });
+
+    document.getElementById("calculate").addEventListener("click", () => {
+      document.getElementById("notice").style.display = "none";
+
+      const totalEntered = parseMoney(capital);
+      const entered1 = parseMoney(stake1Input);
+      const entered2 = parseMoney(stake2Input);
+
+      const picker1 = document.querySelector('[data-picker="house1"]');
+      const picker2 = document.querySelector('[data-picker="house2"]');
+
+      const house1 = picker1.dataset.value;
+      const house2 = picker2.dataset.value;
+
+      const odd1 = Number(document.getElementById("odd1").value);
+      const odd2 = Number(document.getElementById("odd2").value);
+
+      if (!house1 || !house2) {
+        showNotice("Selecciona las dos casas de apuestas.");
+        return;
+      }
+
+      if (house1 === house2) {
+        showNotice("Selecciona dos casas diferentes.");
+        return;
+      }
+
+      if (!odd1 || !odd2 || odd1 <= 1 || odd2 <= 1) {
+        showNotice("Ingresa ambas cuotas mayores que 1.");
+        return;
+      }
+
+      const implied = 1 / odd1 + 1 / odd2;
+
+      if (implied >= 1) {
+        showNotice(
+          "Estas cuotas no forman una surebet válida. " +
+          "La suma de probabilidades implícitas debe ser menor al 100%."
+        );
+        return;
+      }
+
+      let stake1;
+      let stake2;
+      let total;
+
+      if (entered1 && entered2) {
+        stake1 = round100(entered1);
+        stake2 = round100(entered2);
+        total = stake1 + stake2;
+      } else if (entered1) {
+        stake1 = round100(entered1);
+        stake2 = round100((stake1 * odd1) / odd2);
+        total = stake1 + stake2;
+      } else if (entered2) {
+        stake2 = round100(entered2);
+        stake1 = round100((stake2 * odd2) / odd1);
+        total = stake1 + stake2;
+      } else if (totalEntered) {
+        total = round100(totalEntered);
+        stake1 = round100((total * (1 / odd1)) / implied);
+        stake2 = total - stake1;
+      } else {
+        showNotice(
+          "Ingresa el capital total o el capital de al menos una casa."
+        );
+        return;
+      }
+
+      const return1 = stake1 * odd1;
+      const return2 = stake2 * odd2;
+      const guaranteed = Math.min(return1, return2);
+      const profit = guaranteed - total;
+      const roi = total ? (profit / total) * 100 : 0;
+
+      document.getElementById("rows").innerHTML =
+        resultRow(
+          "💼",
+          "Capital total apostado",
+          money(total),
+          "total-row"
+        ) +
+        resultRow("💵", `Apostar en ${house1}`, money(stake1)) +
+        resultRow("💵", `Apostar en ${house2}`, money(stake2)) +
+        `
+          <div class="payout-grid">
+            <div class="payout-card">
+              <span class="payout-label">💰 Recibes en ${house1}</span>
+              <strong class="payout-value">${money(return1)}</strong>
+              <small class="payout-profit">Beneficio teórico</small>
+              <strong class="payout-benefit">${money(return1 - total)}</strong>
+              <small class="payout-percent">
+                ${((return1 - total) / total * 100).toFixed(2)}% de beneficio
+              </small>
+            </div>
+
+            <div class="payout-card">
+              <span class="payout-label">💰 Recibes en ${house2}</span>
+              <strong class="payout-value">${money(return2)}</strong>
+              <small class="payout-profit">Beneficio teórico</small>
+              <strong class="payout-benefit">${money(return2 - total)}</strong>
+              <small class="payout-percent">
+                ${((return2 - total) / total * 100).toFixed(2)}% de beneficio
+              </small>
+            </div>
+          </div>
+
+          <div class="profit">
+            <small>Ganancia garantizada</small>
+            <strong>${money(profit)}</strong>
+            <em>Retorno estimado: ${roi.toFixed(2)}%</em>
+          </div>
+        `;
+
+      modal.classList.add("open");
+    });
+  </script>
 </body>
 </html>
